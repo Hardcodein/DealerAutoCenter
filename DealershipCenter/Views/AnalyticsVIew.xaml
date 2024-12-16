@@ -1,0 +1,76 @@
+﻿<UserControl x:Class="DealershipCenter.Views.AnalyticsVIew"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             xmlns:local="clr-namespace:DealershipCenter.Views" 
+             xmlns:vm="clr-namespace:DealershipCenter.ViewModels" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:props="clr-namespace:DealershipCenter.Properties"
+             d:DataContext="{d:DesignInstance vm:AnalyticsViewModel}"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DealershipCenter;component/AppDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+        
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ToolBar MinHeight="{StaticResource ToolBarBaseHeight }">
+
+            <TextBlock Text="{x:Static props:Resources.Model}" VerticalAlignment="Center" />
+
+            <TextBlock VerticalAlignment="Center" Margin="{StaticResource BaseMargin}">
+                <Hyperlink Command="{Binding SelectModelCarCommand}">
+                    <TextBlock  Text="{Binding SelectedModelCarItem.Name, FallbackValue ={x:Static props:Resources.ChoiseModelCar}}"/>
+                </Hyperlink>
+            </TextBlock>
+
+            <ListBox  
+                ItemsSource="{Binding ModelCars}"
+                SelectedItem="{Binding SelectedModelCarItem,Mode=TwoWay}">
+                
+                <ListBox.ItemTemplate >
+                    <DataTemplate>
+                        <TextBlock  Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding LoadDataByYearsCommand}" CommandParameter="{Binding SelectedModelCarItem}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </ListBox>
+            
+        </ToolBar>
+        
+        <StackPanel
+            Grid.Row="1" 
+            x:Name="StatsStackPanel">
+            
+            <TextBlock
+                Text="{x:Static props:Resources.TableSales}" 
+                FontSize="20"
+                HorizontalAlignment="Center"/>
+
+            <lvc:PieChart               
+                Width="650"
+                Height="650"
+                HorizontalAlignment="Center"
+                InitialRotation="90"
+                MaxAngle="270"
+                MaxValue="{Binding MaxValuePieChart}"
+                MinValue="0"
+                Series="{Binding SalesAmountsByYears}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

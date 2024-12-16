@@ -1,0 +1,96 @@
+﻿<UserControl x:Class="DealershipCenter.Views.SalesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialdesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:local="clr-namespace:DealershipCenter.Views"
+             xmlns:vm="clr-namespace:DealershipCenter.ViewModels"
+             xmlns:props="clr-namespace:DealershipCenter.Properties"
+             d:DataContext="{d:DesignInstance vm:SalesViewModel}"
+             mc:Ignorable="d"
+             >
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DealershipCenter;component/AppDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <materialdesign:DialogHost>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <ToolBar MinHeight="{StaticResource ToolBarBaseHeight }">
+                
+               <TextBlock Text="{x:Static props:Resources.Model}" VerticalAlignment="Center" />
+               
+               <TextBlock VerticalAlignment="Center" Margin="{StaticResource BaseMargin}">
+                    <Hyperlink Command="{Binding SelectModelCarCommand}">
+                        <TextBlock  Text="{Binding SelectedModelCarItem.Name, FallbackValue ={x:Static props:Resources.ChoiseModelCar}}"/>
+                    </Hyperlink>
+               </TextBlock>
+                
+                <ListBox  
+                 ItemsSource="{Binding ModelCars}"
+                 SelectedItem="{Binding SelectedModelCarItem,Mode=TwoWay}">
+                    <ListBox.ItemTemplate >
+                        <DataTemplate>
+                            <TextBlock  Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectionChanged">
+                            <i:InvokeCommandAction Command="{Binding LoadDataToSelectedModelCarCommand}" CommandParameter="{Binding SelectedModelCarItem}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </ListBox>
+               
+            </ToolBar>
+
+            <TabControl Grid.Row="1" 
+                      HorizontalContentAlignment="Left"
+                      materialdesign:ColorZoneAssist.Mode="PrimaryMid"
+                      Grid.IsSharedSizeScope="True"
+                      Style="{StaticResource MaterialDesignFilledTabControl}">
+                
+                <TabItem Header="{x:Static props:Resources.TableModelCar}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <ToolBar>
+                            <Button 
+                                Padding="{StaticResource BasePadding}"
+                                Command="{Binding ExportToExcelCommand}"
+                                ToolTip="{x:Static props:Resources.ExportToExcel}">
+                                <materialdesign:PackIcon  Kind="MicrosoftExcel"/>
+                            </Button>
+                        </ToolBar>
+                        
+                        <DataGrid 
+                         Grid.Row="1"
+                         AutoGenerateColumns="False"
+                         GridLinesVisibility="All"
+                         VirtualizingPanel.ScrollUnit="Pixel"
+                         ItemsSource="{Binding SalesCars}"                      
+                         ItemContainerStyle="{StaticResource HighPriceStyle}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="{x:Static props:Resources.Color}" Binding="{Binding Color}"/>
+                                <DataGridTextColumn Header="{x:Static props:Resources.ComlectaionModel}" Binding="{Binding Complectation}"/>
+                                <DataGridTextColumn Header="{x:Static props:Resources.DateofSale}" Binding="{Binding Date}"/>
+                                <DataGridTextColumn Header="{x:Static props:Resources.PriceofSales}" Binding="{Binding  Amount}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </materialdesign:DialogHost>
+</UserControl>
